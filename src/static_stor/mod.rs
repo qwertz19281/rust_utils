@@ -20,7 +20,7 @@ macro_rules! create_static_stor {
     ($v:vis $name:ident: $t:ty = $i:expr) => {
         #[allow(dead_code)]
         $v mod $name {
-            $v mod private {
+            pub mod private {
                 use std::{cell::RefCell,sync::{Arc,RwLock,atomic::{AtomicUsize,Ordering}}};
 
                 lazy_static::lazy_static! {
@@ -44,7 +44,7 @@ macro_rules! create_static_stor {
             }
 
             /// access the $t of $name immutable, fast operation
-            $v fn with<R, F: FnOnce(&$t) -> R>(f: F) -> R {
+            pub fn with<R, F: FnOnce(&$t) -> R>(f: F) -> R {
                 private::LOCAL.with(|s| {
                     let mut s = s.borrow_mut();
                     
@@ -58,7 +58,7 @@ macro_rules! create_static_stor {
                 })
             }
             /// access the $t of $name mutable, slow operation
-            $v fn with_mut<R, F: FnOnce(&mut $t) -> R>(f: F) -> R {
+            pub fn with_mut<R, F: FnOnce(&mut $t) -> R>(f: F) -> R {
                 let mut lock = private::GLOBAL.write().unwrap();
 
                 let m = std::sync::Arc::make_mut(&mut lock);
