@@ -1,4 +1,4 @@
-create_static_stor!(pub akw: Vec<u8>);
+create_static_stor!(akw: Vec<u8>);
 
 #[test]
 fn test() {

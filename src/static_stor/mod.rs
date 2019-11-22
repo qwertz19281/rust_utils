@@ -2,21 +2,29 @@
 //(https://github.com/Diggsey/query_interface/blob/master/src/dynamic.rs)
 
 /// generate a static global stor which is read fast but updated slow using cow technologies
-/// create_static_stor!(VISIBILITY NAME: TYPE);
+/// create_static_stor!(VISIBILITY NAME: TYPE) where T: ?Sized + Clone + Default + Send + Sync;
 /// TODO FIXME minimum required visibility is pub(super)
 /// stor type must implement Default and Clone
 /// generates a pub (TODO: visibility options) module with with and with_mut fns
 #[macro_export]
 macro_rules! create_static_stor {
+    ($name:ident: $t:ty) => {
+        create_static_stor!(pub(super) $name: $t);
+    };
+    ($name:ident: $t:ty = $i:expr) => {
+        create_static_stor!(pub(super) $name: $t = $i);
+    };
     ($v:vis $name:ident: $t:ty) => {
+        create_static_stor!($v $name: $t = std::default::Default::default() );
+    };
+    ($v:vis $name:ident: $t:ty = $i:expr) => {
         #[allow(dead_code)]
         $v mod $name {
             $v mod private {
                 use std::{cell::RefCell,sync::{Arc,RwLock,atomic::{AtomicUsize,Ordering}}};
-                //use std::clone::Clone;
 
                 lazy_static::lazy_static! {
-                    pub static ref GLOBAL: RwLock<Arc<$t>> = RwLock::default();
+                    pub static ref GLOBAL: RwLock<Arc<$t>> = RwLock::new(Arc::new($i));
                 }
 
                 pub static VERSION: AtomicUsize = AtomicUsize::new(0);
