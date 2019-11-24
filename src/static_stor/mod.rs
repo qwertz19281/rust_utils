@@ -18,10 +18,14 @@ macro_rules! create_static_stor {
         create_static_stor!($v $name: $t = std::default::Default::default() );
     };
     ($v:vis $name:ident: $t:ty = $i:expr) => {
-        #[allow(dead_code)]
+        #[allow(dead_code,unused_imports)]
         $v mod $name {
+            use super::*;
+
+            use std::{cell::RefCell,sync::{Arc,RwLock,atomic::{AtomicUsize,Ordering}}};
+
             pub mod private {
-                use std::{cell::RefCell,sync::{Arc,RwLock,atomic::{AtomicUsize,Ordering}}};
+                use super::*;
 
                 lazy_static::lazy_static! {
                     pub static ref GLOBAL: RwLock<Arc<$t>> = RwLock::new(Arc::new($i));
@@ -30,7 +34,7 @@ macro_rules! create_static_stor {
                 pub static VERSION: AtomicUsize = AtomicUsize::new(0);
 
                 pub fn update() -> (usize,Arc<$t>) {
-                    let lock = GLOBAL.read().unwrap();
+                    let lock = RwLock::read(&*GLOBAL).unwrap();
 
                     let s = Clone::clone(&*lock);
                     let v = VERSION.load(Ordering::Acquire);
@@ -59,7 +63,7 @@ macro_rules! create_static_stor {
             }
             /// access the $t of $name mutable, slow operation
             pub fn with_mut<R, F: FnOnce(&mut $t) -> R>(f: F) -> R {
-                let mut lock = private::GLOBAL.write().unwrap();
+                let mut lock = RwLock::write(&*private::GLOBAL).unwrap();
 
                 let m = std::sync::Arc::make_mut(&mut lock);
 
