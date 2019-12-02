@@ -27,13 +27,13 @@ macro_rules! create_static_stor {
             pub mod private {
                 use super::*;
 
-                lazy_static::lazy_static! {
+                #[inline] lazy_static::lazy_static! {
                     pub static ref GLOBAL: RwLock<Arc<$t>> = RwLock::new(Arc::new($i));
                 }
 
                 pub static VERSION: AtomicUsize = AtomicUsize::new(0);
 
-                pub fn update() -> (usize,Arc<$t>) {
+                #[inline] pub fn update() -> (usize,Arc<$t>) {
                     let lock = RwLock::read(&*GLOBAL).unwrap();
 
                     let s = Clone::clone(&*lock);
@@ -42,14 +42,14 @@ macro_rules! create_static_stor {
                     (v,s)
                 }
 
-                std::thread_local! {
+                #[inline] std::thread_local! {
                     pub static LOCAL: RefCell<(usize,Arc<$t>)> = RefCell::new(update());
                 }
             }
 
             /// access the $t of $name immutable, fast operation
-            pub fn with<R, F: FnOnce(&$t) -> R>(f: F) -> R {
-                private::LOCAL.with(|s| {
+            #[inline] pub fn with<R, F: FnOnce(&$t) -> R>(f: F) -> R {
+                private::LOCAL.with(#[inline] |s| {
                     let mut s = s.borrow_mut();
                     
                     let v_now = private::VERSION.load(std::sync::atomic::Ordering::Acquire);
@@ -62,7 +62,7 @@ macro_rules! create_static_stor {
                 })
             }
             /// access the $t of $name mutable, slow operation
-            pub fn with_mut<R, F: FnOnce(&mut $t) -> R>(f: F) -> R {
+            #[inline] pub fn with_mut<R, F: FnOnce(&mut $t) -> R>(f: F) -> R {
                 let mut lock = RwLock::write(&*private::GLOBAL).unwrap();
 
                 let m = std::sync::Arc::make_mut(&mut lock);
