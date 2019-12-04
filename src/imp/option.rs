@@ -4,6 +4,9 @@ pub trait OptionExt<T> {
     #[inline] fn with<R>(&self, f: impl FnOnce(&T)->R) -> Option<R>;
     #[inline] fn with_mut<R>(&mut self, f: impl FnOnce(&mut T)->R) -> Option<R>;
 
+    #[inline] fn with_if<R,U>(&self, o: &Option<U>, f: impl FnOnce(&T,&U)->R) -> Option<R>;
+    #[inline] fn with_mut_if<R,U>(&mut self, o: &Option<U>, f: impl FnOnce(&mut T,&U)->R) -> Option<R>;
+
     #[inline] fn add_to<V>(&mut self, v: V) where T: AddAssign<V>;
     #[inline] fn sub_to<V>(&mut self, v: V) where T: SubAssign<V>;
     #[inline] fn mul_to<V>(&mut self, v: V) where T: MulAssign<V>;
@@ -26,6 +29,13 @@ impl<T> OptionExt<T> for Option<T> {
     }
     #[inline] fn with_mut<R>(&mut self, f: impl FnOnce(&mut T)->R) -> Option<R> {
         self.as_mut().map(f)
+    }
+
+    #[inline] fn with_if<R,U>(&self, o: &Option<U>, f: impl FnOnce(&T,&U)->R) -> Option<R> {
+        flatten( self.with(|s| o.with(|o| f(s,o) )) )
+    }
+    #[inline] fn with_mut_if<R,U>(&mut self, o: &Option<U>, f: impl FnOnce(&mut T,&U)->R) -> Option<R> {
+        flatten( self.with_mut(|s| o.with(|o| f(s,o) )) )
     }
 
     #[inline] fn add_to<V>(&mut self, v: V) where T: AddAssign<V> {
@@ -89,5 +99,13 @@ impl<T> OptionExt<T> for Option<T> {
         if let Some(v) = v {
             self.div_to(v)
         }
+    }
+}
+
+#[inline]
+fn flatten<T>(i: Option<Option<T>>) -> Option<T> {
+    match i {
+        Some(j) => j,
+        None => None,
     }
 }
