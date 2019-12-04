@@ -7,7 +7,7 @@ pub trait OptionExt<T> {
     #[inline] fn with_if<R,U>(&self, o: &Option<U>, f: impl FnOnce(&T,&U)->R) -> Option<R>;
     #[inline] fn with_mut_if<R,U>(&mut self, o: &Option<U>, f: impl FnOnce(&mut T,&U)->R) -> Option<R>;
 
-    #[inline] fn with_mut_if_saturate<R>(&mut self, o: Option<T>, f: impl FnOnce(&mut T,&T)->R) -> Option<R>;
+    #[inline] fn with_mut_if_saturating<R>(&mut self, o: Option<T>, f: impl FnOnce(&mut T,&T)->R) -> Option<R>;
 
     #[inline] fn add_to<V>(&mut self, v: V) where T: AddAssign<V>;
     #[inline] fn sub_to<V>(&mut self, v: V) where T: SubAssign<V>;
@@ -40,7 +40,7 @@ impl<T> OptionExt<T> for Option<T> {
         flatten( self.with_mut(#[inline] |s| o.with(|o| f(s,o) )) )
     }
 
-    #[inline] fn with_mut_if_saturate<R>(&mut self, o: Option<T>, f: impl FnOnce(&mut T,&T)->R) -> Option<R> {
+    #[inline] fn with_mut_if_saturating<R>(&mut self, o: Option<T>, f: impl FnOnce(&mut T,&T)->R) -> Option<R> {
         if let Some(s) = self {
             o.with(#[inline] |o| f(s,o) )
         }else{
