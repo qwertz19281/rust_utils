@@ -7,6 +7,8 @@ pub trait OptionExt<T> {
     #[inline] fn with_if<R,U>(&self, o: &Option<U>, f: impl FnOnce(&T,&U)->R) -> Option<R>;
     #[inline] fn with_mut_if<R,U>(&mut self, o: &Option<U>, f: impl FnOnce(&mut T,&U)->R) -> Option<R>;
 
+    #[inline] fn with_mut_if_saturate<R>(&mut self, o: Option<T>, f: impl FnOnce(&mut T,&T)->R) -> Option<R>;
+
     #[inline] fn add_to<V>(&mut self, v: V) where T: AddAssign<V>;
     #[inline] fn sub_to<V>(&mut self, v: V) where T: SubAssign<V>;
     #[inline] fn mul_to<V>(&mut self, v: V) where T: MulAssign<V>;
@@ -32,23 +34,32 @@ impl<T> OptionExt<T> for Option<T> {
     }
 
     #[inline] fn with_if<R,U>(&self, o: &Option<U>, f: impl FnOnce(&T,&U)->R) -> Option<R> {
-        flatten( self.with(|s| o.with(|o| f(s,o) )) )
+        flatten( self.with(#[inline] |s| o.with(|o| f(s,o) )) )
     }
     #[inline] fn with_mut_if<R,U>(&mut self, o: &Option<U>, f: impl FnOnce(&mut T,&U)->R) -> Option<R> {
-        flatten( self.with_mut(|s| o.with(|o| f(s,o) )) )
+        flatten( self.with_mut(#[inline] |s| o.with(|o| f(s,o) )) )
+    }
+
+    #[inline] fn with_mut_if_saturate<R>(&mut self, o: Option<T>, f: impl FnOnce(&mut T,&T)->R) -> Option<R> {
+        if let Some(s) = self {
+            o.with(#[inline] |o| f(s,o) )
+        }else{
+            *self = o;
+            None
+        }
     }
 
     #[inline] fn add_to<V>(&mut self, v: V) where T: AddAssign<V> {
-        self.with_mut(|s| AddAssign::add_assign(s,v) );
+        self.with_mut(#[inline] |s| AddAssign::add_assign(s,v) );
     }
     #[inline] fn sub_to<V>(&mut self, v: V) where T: SubAssign<V> {
-        self.with_mut(|s| SubAssign::sub_assign(s,v) );
+        self.with_mut(#[inline] |s| SubAssign::sub_assign(s,v) );
     }
     #[inline] fn mul_to<V>(&mut self, v: V) where T: MulAssign<V> {
-        self.with_mut(|s| MulAssign::mul_assign(s,v) );
+        self.with_mut(#[inline] |s| MulAssign::mul_assign(s,v) );
     }
     #[inline] fn div_to<V>(&mut self, v: V) where T: DivAssign<V> {
-        self.with_mut(|s| DivAssign::div_assign(s,v) );
+        self.with_mut(#[inline] |s| DivAssign::div_assign(s,v) );
     }
 
     #[inline] fn add_to_lossy<V>(&mut self, v: Option<V>) where T: AddAssign<V> {
