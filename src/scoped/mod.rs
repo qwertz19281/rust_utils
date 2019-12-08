@@ -1,3 +1,5 @@
+use std::any::Any;
+
 pub mod imp;
 pub mod macros;
 /// a type which inner type T can be accessed scoped
@@ -20,3 +22,13 @@ pub trait Interior {
 struct Test {}
 
 crate::impl_scoped_mut!(Test);
+
+/*pub trait Teest: Any {
+    fn e(&self) -> &usize;
+}
+
+impl<'a,T> Teest for &'a mut T where T: Teest + 'static {
+    fn e(&self) -> &usize {
+        <T as Teest>::e(self)
+    }
+}*/
