@@ -1,24 +1,25 @@
 # qwutils (WIP)  
+```rust
+use qwutils::*;
+```
 
-## Traits  
-
-### Impls
+## Impls
 ```rust
 Option {
-    fn with(&self, |&T|) //short for as_ref().map()
-    fn with_if(&self, &Option<U>, |&T,&U|)
-    fn add/sub/mul/div_to(&self, &V)
+    fn with(&self, |&T|->R) -> R; //short for as_ref().map()
+    fn with_if(&self, &Option<U>, |&T,&U|->R) -> R;
+    fn add/sub/mul/div_to(&self, &V);
 }
 bool {
-    fn map(||->R)->R;
+    fn map(&self,||->R)->R;
     //map_or, map_or_else also available
     fn option(&self) -> Option<()>;
     fn result(&self) -> Result<(),()>;
-    more impls: https://crates.io/crates/boolinator
+    more bool impls: https://crates.io/crates/boolinator
 }
 Vec {
     fn push_option(&mut self, o: Option<T>);
-    fn grow_to_with(&mut self, len, FnOnce()->T);
+    fn grow_to_with(&mut self, len, ||->T);
     fn grow_to(&mut self, len, T) where T: Clone;
     fn grow_to_default(&mut self, len) where T: Default;
 }
@@ -26,10 +27,12 @@ Result {
     fn expect_nodebug(&self, &str); //for T without Debug
     //expect_err, unwrap, unwrap_err also available
 }
-Range { //where T: Sub<T>
-    fn len(&self) -> T;
+Range {
+    fn len(&self) -> T where T: Sub<T>;
 }
 ```
+
+## Traits 
 
 ### RefClonable  
 ```rust
@@ -40,19 +43,19 @@ trait RefClonable {
 
 - Fast reference cloning
 - Similar to Clone
-- Implemented on Rc/Arc
+- Implemented for Rc/Arc
 - ```refcounted.refc()``` behaves like ```Rc/Arc::clone(&refcounted)```
 
 ### ScopedAccess (WIP)
 ```rust
 trait ScopedAccess {
-    fn access(&self, |&T|)
-    fn access_mut(&mut self, |&mut T|)
+    fn access(&self, |&T|->R) -> R;
+    fn access_mut(&mut self, |&mut T|->R) -> R;
 }
 ```
 
 - Acces inner types which are only accessible scoped
-- implemented on RefCell, RwLock, Rc/Arc<RefCell/RwLock>, references, Box, ...
+- implemented for RefCell, RwLock, Rc/Arc<RefCell/RwLock>, references, Box, ...
 
 ## Macros
 
@@ -64,7 +67,7 @@ TODO
 
 ### if_type (WIP)
 ```rust
-pub fn if_type<T,Specific>(FnOnce()->Specific) -> T
+pub fn if_type<T,Specific>(||->Specific) -> T;
 ```
 - calls the given function if T and Specific are the same type (by comparing TypeId)
 - Both Types must be statically known (T: 'static, Specific: 'static)
