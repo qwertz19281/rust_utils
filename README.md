@@ -15,7 +15,7 @@ bool {
     //map_or, map_or_else also available
     fn option(&self) -> Option<()>;
     fn result(&self) -> Result<(),()>;
-    more bool impls: https://crates.io/crates/boolinator
+    //more bool impls: https://crates.io/crates/boolinator
 }
 Vec {
     fn push_option(&mut self, o: Option<T>);
@@ -31,6 +31,7 @@ Range {
     fn len(&self) -> T where T: Sub<T>;
 }
 ```
+For most functions _mut variants are available
 
 ## Traits 
 
