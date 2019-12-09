@@ -6,7 +6,7 @@ pub mod static_stor;
 pub mod scoped;
 pub mod if_type;
 
-//pub mod opion;
+pub mod macros;
 
 pub use imp::*;
 pub use refc::*;
