@@ -3,6 +3,7 @@ pub mod range;
 pub mod result;
 pub mod boolext;
 pub mod option;
+pub mod tuple;
 
 pub use vec::*;
 pub use range::*;
@@ -10,3 +11,4 @@ pub use boolinator::*;
 pub use result::*;
 pub use boolext::*;
 pub use option::*;
+pub use tuple::{AsArray,AsTuple};

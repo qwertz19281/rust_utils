@@ -11,11 +11,15 @@ Option {
     fn add/sub/mul/div_to(&self, &V);
 }
 bool {
-    fn map(&self,||->R)->R;
+    fn map(&self,||->R) -> R;
     //map_or, map_or_else also available
     fn option(&self) -> Option<()>;
     fn result(&self) -> Result<(),()>;
     //more bool impls: https://crates.io/crates/boolinator
+}
+Array/Tuple {
+    [T; N]::to_tuple(self) -> (T, ...);
+    (T, ...)::to_array(self) -> [T; N];
 }
 Vec {
     fn push_option(&mut self, o: Option<T>);
@@ -72,4 +76,3 @@ pub fn if_type<T,Specific>(||->Specific) -> T;
 ```
 - calls the given function if T and Specific are the same type (by comparing TypeId)
 - Both Types must be statically known (T: 'static, Specific: 'static)
-- Check out [transmogrify](https://github.com/sagebind/transmogrify) for casting between (statically known) types if both are the same type
