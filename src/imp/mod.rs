@@ -11,4 +11,4 @@ pub use boolinator::*;
 pub use result::*;
 pub use boolext::*;
 pub use option::*;
-pub use tuple::{AsArray,AsTuple};
+pub use tuple::*;
