@@ -8,7 +8,7 @@ impl<T> RefClonable for Arc<T> where T: ?Sized {
     }
 }
 
-impl<T> RefClonable for Rc<T> {
+impl<T> RefClonable for Rc<T> where T: ?Sized {
     #[inline] fn refc(&self) -> Self {
         Rc::clone(self)
     }
