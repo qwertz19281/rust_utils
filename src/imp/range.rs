@@ -10,9 +10,3 @@ impl<T> RangeExtSub2TCopy<T> for Range<T> where T: Sub<Output=T> + Copy {
         self.end-self.start
     }
 }
-
-/*impl RangeExtSub2TCopy<T> for RangeInclusive<T> where T: Sub<Output=T> + Add<Output=T> + One + Copy {
-    fn len(&self) -> T {
-        *self.end() - *self.start() + T::one()
-    }
-}*/ //TODO macro rules

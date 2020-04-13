@@ -1,3 +1,4 @@
+/// macro for compact operator implementations
 #[macro_export]
 macro_rules! opion {
     ($op:tt($l:ty, $r:ty) |$li:ident,move $ri:ident| $f:block) => {

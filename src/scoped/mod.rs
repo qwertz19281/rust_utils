@@ -18,17 +18,3 @@ pub trait Interior {
     fn interior_access<R>(&self, f: impl FnOnce(&Self::T)->R) -> R;
     fn interior_access_mut<R>(&self, f: impl FnOnce(&mut Self::T)->R) -> R;
 }
-
-struct Test {}
-
-crate::impl_scoped_mut!(Test);
-
-/*pub trait Teest: Any {
-    fn e(&self) -> &usize;
-}
-
-impl<'a,T> Teest for &'a mut T where T: Teest + 'static {
-    fn e(&self) -> &usize {
-        <T as Teest>::e(self)
-    }
-}*/
