@@ -1,8 +1,7 @@
 pub trait BoolExtOption {
-    #[inline]
     fn option(&self) -> Option<()>;
-    #[inline]
     fn result(&self) -> Result<(),()>;
+    
     #[inline]
     fn map<U>(&self, f: impl FnOnce()->U) -> Option<U> {
         self.option().map(#[inline]|_|f())

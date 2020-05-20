@@ -1,8 +1,8 @@
 pub trait ResultNonDebugUnwrap<T,E> {
-    #[inline] fn expect_nodebug(self, msg: &str) -> T;
-    #[inline] fn expect_err_nodebug(self, msg: &str) -> E;
-    #[inline] fn unwrap_nodebug(self) -> T;
-    #[inline] fn unwrap_err_nodebug(self) -> E;
+    fn expect_nodebug(self, msg: &str) -> T;
+    fn expect_err_nodebug(self, msg: &str) -> E;
+    fn unwrap_nodebug(self) -> T;
+    fn unwrap_err_nodebug(self) -> E;
 }
 
 impl<T,E> ResultNonDebugUnwrap<T,E> for Result<T,E> {

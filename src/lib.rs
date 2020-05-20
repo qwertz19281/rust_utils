@@ -1,5 +1,6 @@
 pub mod imp;
 pub mod refc;
+pub mod arc_slice;
 #[macro_use]
 pub mod static_stor;
 
@@ -10,7 +11,6 @@ pub mod from_into;
 
 pub mod macros;
 
-use std::rc::Rc;
 pub use imp::*;
 pub use refc::*;
 pub use if_type::*;

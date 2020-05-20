@@ -1,5 +1,3 @@
-use std::any::Any;
-
 pub mod imp;
 pub mod macros;
 /// a type which inner type T can be accessed scoped
