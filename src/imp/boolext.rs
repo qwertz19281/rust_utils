@@ -14,6 +14,10 @@ pub trait BoolExtOption {
     fn map_or_else<U>(&self, default: impl FnOnce()->U, f: impl FnOnce()->U) -> U {
         self.option().map_or_else(default,#[inline]|_|f())
     }
+    #[inline]
+    fn map_or_err<T,E>(&self, f: impl FnOnce()->T, e: impl FnOnce()->E) -> Result<T,E> {
+        self.result().map(#[inline]|_|f()).map_err(#[inline]|_|e())
+    }
 }
 
 impl BoolExtOption for bool {
