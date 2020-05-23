@@ -217,17 +217,12 @@ impl<T> ArcSlice<T> {
     }
 
     pub fn push(&mut self, v: T) where T: Clone {
-        let (vec,slice) = self._make_mut_with_capacity(self.len() + 1);
-        vec.truncate(slice.end);
-        vec.push(v);
-        self.slice.end += 1;
+        self.insert(self.len(), v)
     }
     pub fn pop(&mut self) -> Option<T> where T: Clone {
         (self.slice.end > self.slice.start)
             .map(|| {
-                let x = self.remove(self.len()-1);
-                self.slice.end -= 1;
-                x
+                self.remove(self.len()-1)
             })
     }
 
@@ -318,32 +313,6 @@ fn slice_slice<S>(range: &Range<usize>, slice: S) -> Range<usize> where S: Range
     s..e
 }
 
-/*fn slice_slice<S>(range: &Range<usize>, slice: S) -> Range<usize> where S: RangeBounds<usize> {
-    let (os,oe) = (range.start,range.end);
-    let (mut s,mut e) = (os,oe);
-
-    let is = match slice.start_bound() {
-        std::ops::Bound::Included(&b) => Some(b),
-        std::ops::Bound::Excluded(&b) => Some(b.saturating_sub(1)),
-        std::ops::Bound::Unbounded => None,
-    };
-    let ie = match slice.end_bound() {
-        std::ops::Bound::Included(&b) => Some(b+1),
-        std::ops::Bound::Excluded(&b) => Some(b),
-        std::ops::Bound::Unbounded => None,
-    };
-
-    if let Some(is) = is {
-        s += is;
-        assert!(is >= os && is <= oe,"Inner slice out of bounds");
-    }
-    if let Some(ie) = ie {
-        e += ie;
-        assert!(ie >= os && ie <= oe,"Inner slice out of bounds");
-    }
-    s..e
-}*/
-
 #[test]
 fn ultrion() {
     let mut a = ArcSlice::from(&b"abcd"[..]);
@@ -374,4 +343,7 @@ fn ultrion() {
     c.retain(|&c| c == b'h' || c == b'f' );
     assert_eq!(&c[..],&b"hff"[..]);
     assert_eq!(&a[..],&b"abhefg"[..]);
+    
+    a.pop();
+    assert_eq!(&a[..],&b"abhef"[..]);
 }
