@@ -105,7 +105,7 @@ impl<T> ArcSlice<T> {
             dest.extend_from_slice(left);
             let removed = origin[index].clone();
             let right = &origin[(index+1)..(origin.len()-1)];
-            let end = origin[origin.len()-1].clone();
+            let end = origin.last().unwrap().clone();
             dest.push(end);
             dest.extend_from_slice(right);
             *self = Self::from(dest);
@@ -200,7 +200,7 @@ impl<T> ArcSlice<T> {
         if new_len > self.len() {
             let (vec,slice) = self._make_mut_with_capacity(self.len() + 1);
             vec.truncate(slice.end);
-            vec.reserve(new_len - slice.len());
+            vec.reserve( (slice.start+new_len).saturating_sub(vec.capacity()) );
             for _ in slice.len()..new_len {
                 vec.push(f());
             }
