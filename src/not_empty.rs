@@ -11,75 +11,89 @@ pub trait NotEmpty: Sized {
 }
 
 impl<T> NotEmpty for &Vec<T> {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }
 }
 impl<T> NotEmpty for &mut Vec<T> {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }
 }
 impl<T> NotEmpty for Vec<T> {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }
 }
 
 impl NotEmpty for &str {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }
 }
 impl NotEmpty for &mut str {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }
 }
 
 impl NotEmpty for &String {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }
 }
 impl NotEmpty for &mut String {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }
 }
 impl NotEmpty for String {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }
 }
 
 impl<T> NotEmpty for &HashSet<T> {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }
 }
 impl<T> NotEmpty for &mut HashSet<T> {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }
 }
 impl<T> NotEmpty for HashSet<T> {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }
 }
 
 impl<K,V> NotEmpty for &HashMap<K,V> {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }
 }
 impl<K,V> NotEmpty for &mut HashMap<K,V> {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }
 }
 impl<K,V> NotEmpty for HashMap<K,V> {
+    #[inline]
     fn _is_empty(&self) -> bool {
         self.is_empty()
     }

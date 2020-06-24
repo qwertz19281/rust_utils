@@ -17,31 +17,36 @@ pub trait VecExt<T> {
 }
 
 impl<T> VecExt<T> for Vec<T> {
-    #[inline] fn push_option(&mut self, o: Option<T>) {
+    #[inline]
+    fn push_option(&mut self, o: Option<T>) {
         if let Some(o) = o {
             self.push(o);
         }
     }
 
-    #[inline] fn grow_to_with<F: FnMut() -> T>(&mut self, size: usize, f: F) {
+    #[inline]
+    fn grow_to_with<F: FnMut() -> T>(&mut self, size: usize, f: F) {
         if size > self.len() {
             self.resize_with(size, f);
         }
     }
 
-    #[inline] fn grow_to(&mut self, size: usize, value: T) where T: Clone {
+    #[inline]
+    fn grow_to(&mut self, size: usize, value: T) where T: Clone {
         if size > self.len() {
             self.resize(size, value);
         }
     }
 
-    #[inline] fn grow_to_default(&mut self, size: usize) where T: Default {
+    #[inline]
+    fn grow_to_default(&mut self, size: usize) where T: Default {
         if size > self.len() {
             self.resize_with(size, T::default);
         }
     }
 
-    #[inline] fn insert_slice_copy(&mut self, index: usize, slice: &[T]) where T: Copy {
+    #[inline]
+    fn insert_slice_copy(&mut self, index: usize, slice: &[T]) where T: Copy {
         let vlen = self.len();
         let slen = slice.len();
         assert!(index <= vlen);
@@ -63,7 +68,8 @@ impl<T> VecExt<T> for Vec<T> {
         }
     }
 
-    #[inline] fn insert_slice_clone(&mut self, index: usize, slice: &[T]) where T: Clone {
+    #[inline]
+    fn insert_slice_clone(&mut self, index: usize, slice: &[T]) where T: Clone {
         let vlen = self.len();
         let slen = slice.len();
         assert!(index <= vlen);

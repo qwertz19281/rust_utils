@@ -70,22 +70,26 @@ impl<T> Into<Vec<T>> for &mut ArcSlice<T> where T: Clone {
 }
 
 impl<T> AsRef<[T]> for ArcSlice<T> {
+    #[inline]
     fn as_ref(&self) -> &[T] {
         &**self
     }
 }
 impl<T> AsMut<[T]> for ArcSlice<T> where T: Clone {
+    #[inline]
     fn as_mut(&mut self) -> &mut [T] {
         &mut **self
     }
 }
 
 impl<T> Borrow<[T]> for ArcSlice<T> {
+    #[inline]
     fn borrow(&self) -> &[T] {
         &**self
     }
 }
 impl<T> BorrowMut<[T]> for ArcSlice<T> where T: Clone {
+    #[inline]
     fn borrow_mut(&mut self) -> &mut [T] {
         &mut **self
     }

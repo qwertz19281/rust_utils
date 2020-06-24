@@ -6,7 +6,8 @@ use std::ops::Sub;
 }
 
 impl<T> RangeExtSub2TCopy<T> for Range<T> where T: Sub<Output=T> + Copy {
-    #[inline] fn len(&self) -> T {
+    #[inline]
+    fn len(&self) -> T {
         self.end-self.start
     }
 }*/

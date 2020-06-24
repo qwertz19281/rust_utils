@@ -17,6 +17,7 @@ impl<T> ArcSlice<T> {
     /// slice of the current slice
     /// 
     /// will not allocate
+    #[inline]
     pub fn slice<S>(&self, range: S) -> Self where S: RangeBounds<usize> {
         Self{
             inner: self.inner.refc(),
@@ -43,6 +44,7 @@ impl<T> ArcSlice<T> {
         }
     }
 
+    #[inline]
     pub fn len(&self) -> usize {
         assert!(self.slice.end >= self.slice.start);
         assert!(self.slice.end <= self.inner.len());
@@ -50,6 +52,7 @@ impl<T> ArcSlice<T> {
         assert_eq!(len,self[..].len());
         len
     }
+    #[inline]
     pub fn is_empty(&self) -> bool {
         assert!(self.slice.end >= self.slice.start);
         assert!(self.slice.end <= self.inner.len());
@@ -57,6 +60,7 @@ impl<T> ArcSlice<T> {
     }
 
     /// whether this slice vievs the complete backing vec
+    #[inline]
     pub fn is_unsliced(&self) -> bool {
         self.slice.start == 0 && self.slice.end == self.len()
     }
@@ -296,6 +300,7 @@ impl<T> From<Arc<Vec<T>>> for ArcSlice<T> {
     }
 }
 
+#[inline]
 fn slice_slice<S>(range: &Range<usize>, slice: S) -> Range<usize> where S: RangeBounds<usize> {
     let (os,oe) = (range.start,range.end);
     let (mut s,mut e) = (os,oe);
