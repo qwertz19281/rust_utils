@@ -1,4 +1,6 @@
 use super::*;
+use std::{slice, io::{self, IoSlice}, hash::{Hasher, Hash}, vec::IntoIter, fmt};
+use io::Write;
 
 pub struct PartVec<T> {
     inner: Vec<Vec<T>>,
@@ -48,68 +50,34 @@ impl<T,O> PartialEq<O> for PartVec<T> where T: PartialEq, O: AsRef<[T]> {
         todo!()
     }
 }
-impl<T> Eq for PartVec<T> where T: Eq {}
+//impl<T> Eq for PartVec<T> where T: Eq {}
 
 impl<T> PartialOrd for PartVec<T> where T: PartialOrd {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        PartialOrd::partial_cmp(&**self,&**other)
+        todo!()
     }
 }
 impl<T> Ord for PartVec<T> where T: Ord {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        Ord::cmp(&**self,&**other)
+        todo!()
     }
 }
 
 impl<T> Extend<T> for PartVec<T> where T: Clone {
     fn extend<I>(&mut self, iter: I) where I: IntoIterator<Item = T> {
-        let iter = iter.into_iter();
-        let reserve = {
-            let (mut lower,upper) = iter.size_hint();
-            if let Some(upper) = upper {
-                lower = lower.max(upper);
-            }
-            lower
-        };
-        let (vec,slice) = self._make_mut_with_capacity(self.len() + reserve);
-        vec.truncate(slice.end);
-        let reserved = vec.capacity() - slice.end;
-        if reserve > reserved {
-            vec.reserve(reserve-reserved);
-        }
-        for i in iter {
-            vec.push(i);
-            slice.end += 1;
-        }
+        todo!()
     }
 }
 impl<'a,T> Extend<&'a T> for PartVec<T> where T: Clone + 'a {
     fn extend<I>(&mut self, iter: I) where I: IntoIterator<Item = &'a T> {
-        let iter = iter.into_iter();
-        let reserve = {
-            let (mut lower,upper) = iter.size_hint();
-            if let Some(upper) = upper {
-                lower = lower.max(upper);
-            }
-            lower
-        };
-        let (vec,slice) = self._make_mut_with_capacity(self.len() + reserve);
-        vec.truncate(slice.end);
-        let reserved = vec.capacity() - slice.end;
-        if reserve > reserved {
-            vec.reserve(reserve-reserved);
-        }
-        for i in iter {
-            vec.push(i.clone());
-            slice.end += 1;
-        }
+        todo!()
     }
 }
 
 impl<T> Hash for PartVec<T> where T: Hash {
     #[inline]
     fn hash<H>(&self, state: &mut H) where H: Hasher {
-        Hash::hash(&**self, state)
+        todo!()
     }
 }
 
@@ -119,21 +87,7 @@ impl<T> IntoIterator for PartVec<T> where T: Clone {
 
     #[inline]
     fn into_iter(self) -> IntoIter<T> {
-        let slice = self.slice;
-        match Arc::try_unwrap(self.inner) {
-            Ok(mut v) => {
-                v.truncate(slice.end);
-                let mut iter = v.into_iter();
-                for _ in 0..slice.start {
-                    assert!(iter.next().is_some());
-                }
-                iter
-            }
-            Err(v) => {
-                let v = v[slice].to_vec();
-                v.into_iter()
-            }
-        }
+        todo!()
     }
 }
 
@@ -142,7 +96,7 @@ impl<'a, T> IntoIterator for &'a PartVec<T> {
     type IntoIter = slice::Iter<'a, T>;
 
     fn into_iter(self) -> slice::Iter<'a, T> {
-        self[..].iter()
+        todo!()
     }
 }
 impl<'a, T> IntoIterator for &'a mut PartVec<T> where T: Clone {
@@ -150,28 +104,21 @@ impl<'a, T> IntoIterator for &'a mut PartVec<T> where T: Clone {
     type IntoIter = slice::IterMut<'a, T>;
 
     fn into_iter(self) -> slice::IterMut<'a, T> {
-        self[..].iter_mut()
+        todo!()
     }
 }
 
 impl Write for PartVec<u8> {
     #[inline]
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-        self.extend_from_slice(buf);
+        todo!();
         Ok(buf.len())
     }
 
     #[inline]
     fn write_vectored(&mut self, bufs: &[IoSlice<'_>]) -> io::Result<usize> {
-        let len = bufs.iter().map(|b| b.len()).sum();
-        let (vec,slice) = self._make_mut_with_capacity(self.len() + len);
-        vec.truncate(slice.end);
-        vec.reserve(len);
-        for buf in bufs {
-            vec.extend_from_slice(buf);
-        }
-        slice.end += len;
-        Ok(len)
+        todo!();
+        Ok(0)
     }
 
     #[inline]

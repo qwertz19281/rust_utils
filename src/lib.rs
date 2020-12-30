@@ -1,7 +1,7 @@
 pub mod imp;
 pub mod refc;
 pub mod arc_slice;
-pub mod rope_vec;
+//pub mod rope_vec;
 #[macro_use]
 pub mod static_stor;
 
