@@ -33,12 +33,14 @@ impl<T> DerefMut for ArcSlice<T> where T: Clone {
 }
 
 impl<T> Clone for ArcSlice<T> {
+    #[inline]
     fn clone(&self) -> Self {
         self.refc()
     }
 }
 
 impl<T> RefClonable for ArcSlice<T> {
+    #[inline]
     fn refc(&self) -> Self {
         Self{
             inner: self.inner.refc(),
@@ -199,6 +201,7 @@ impl<'a, T> IntoIterator for &'a ArcSlice<T> {
     type Item = &'a T;
     type IntoIter = slice::Iter<'a, T>;
 
+    #[inline]
     fn into_iter(self) -> slice::Iter<'a, T> {
         self[..].iter()
     }
@@ -207,6 +210,7 @@ impl<'a, T> IntoIterator for &'a mut ArcSlice<T> where T: Clone {
     type Item = &'a mut T;
     type IntoIter = slice::IterMut<'a, T>;
 
+    #[inline]
     fn into_iter(self) -> slice::IterMut<'a, T> {
         self[..].iter_mut()
     }

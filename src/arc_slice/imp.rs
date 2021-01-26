@@ -2,6 +2,7 @@ use super::*;
 use std::ops::RangeBounds;
 
 impl<T> ArcSlice<T> {
+    #[inline]
     pub fn new() -> Self {
         Self{
             inner: Arc::new(Vec::new()),
@@ -86,6 +87,7 @@ impl<T> ArcSlice<T> {
         }
     }
 
+    #[inline]
     pub fn truncate(&mut self, len: usize) {
         if len == 0 {
             self.slice = 0..0;
@@ -188,12 +190,14 @@ impl<T> ArcSlice<T> {
         }
     }
 
+    #[inline]
     pub fn split_at(&mut self, at: usize) -> (Self,Self) {
         assert!(at <= self.len(), "`at` out of bounds");
         let start = self.slice(..at);
         let end = self.slice(at..);
         (start,end)
     }
+    #[inline]
     pub fn split_off(&mut self, at: usize) -> Self {
         let (start,end) = self.split_at(at);
         *self = start;
@@ -249,6 +253,7 @@ impl<T> ArcSlice<T> {
         }
     }
 
+    #[inline]
     pub fn clear(&mut self) {
         self.truncate(0);
     }
@@ -260,7 +265,7 @@ impl<T> ArcSlice<T> {
     }
     pub fn _make_mut_with_capacity(&mut self, capacity: usize) -> (&mut Vec<T>,&mut Range<usize>) where T: Clone {
         if Arc::get_mut(&mut self.inner).is_some() {
-            // In this case Arc::make_mut probably won't clone
+            // In this case Arc::make_mut probably won't clone TODO fix if polonius
             (Arc::make_mut(&mut self.inner),&mut self.slice)
         }else{
             // use optimized clone in which case Arc::make_mut would probably clone
