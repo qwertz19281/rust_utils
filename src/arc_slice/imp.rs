@@ -60,10 +60,10 @@ impl<T> ArcSlice<T> {
         self.slice.start == self.slice.end
     }
 
-    /// whether this slice vievs the complete backing vec
+    /// whether this slice views the complete backing vec
     #[inline]
     pub fn is_unsliced(&self) -> bool {
-        self.slice.start == 0 && self.slice.end == self.len()
+        self.slice.start == 0 && self.slice.end == self.inner.len()
     }
 
     /// Minimize memory usage.
