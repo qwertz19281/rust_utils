@@ -62,7 +62,18 @@ impl<T> Into<Vec<T>> for &ArcSlice<T> where T: Clone {
 }
 impl<T> Into<Vec<T>> for ArcSlice<T> where T: Clone {
     fn into(self) -> Vec<T> {
-        self.extract()
+        let Self{inner,slice} = self;
+        if slice.start == 0 {
+            match Arc::try_unwrap(inner) {
+                Ok(mut v) => {
+                    v.truncate(slice.end);
+                    v
+                }
+                Err(inner) => Self{inner,slice}.extract(),
+            }
+        }else{
+            Self{inner,slice}.extract()
+        }
     }
 }
 impl<T> Into<Vec<T>> for &mut ArcSlice<T> where T: Clone {
