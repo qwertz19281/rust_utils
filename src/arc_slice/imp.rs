@@ -47,16 +47,16 @@ impl<T> ArcSlice<T> {
 
     #[inline]
     pub fn len(&self) -> usize {
-        assert!(self.slice.end >= self.slice.start);
-        assert!(self.slice.end <= self.inner.len());
+        debug_assert!(self.slice.end >= self.slice.start);
+        debug_assert!(self.slice.end <= self.inner.len());
         let len = self.slice.end - self.slice.start;
-        assert_eq!(len,self[..].len());
+        debug_assert_eq!(len,self[..].len());
         len
     }
     #[inline]
     pub fn is_empty(&self) -> bool {
-        assert!(self.slice.end >= self.slice.start);
-        assert!(self.slice.end <= self.inner.len());
+        debug_assert!(self.slice.end >= self.slice.start);
+        debug_assert!(self.slice.end <= self.inner.len());
         self.slice.start == self.slice.end
     }
 

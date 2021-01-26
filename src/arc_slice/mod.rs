@@ -17,16 +17,16 @@ impl<T> Deref for ArcSlice<T> {
     type Target = [T];
     #[inline]
     fn deref(&self) -> &Self::Target {
-        assert!(self.slice.end >= self.slice.start);
-        assert!(self.slice.end <= self.inner.len());
+        debug_assert!(self.slice.end >= self.slice.start);
+        debug_assert!(self.slice.end <= self.inner.len());
         &self.inner[self.slice.clone()]
     }
 }
 impl<T> DerefMut for ArcSlice<T> where T: Clone {
     #[inline]
     fn deref_mut(&mut self) -> &mut Self::Target {
-        assert!(self.slice.end >= self.slice.start);
-        assert!(self.slice.end <= self.inner.len());
+        debug_assert!(self.slice.end >= self.slice.start);
+        debug_assert!(self.slice.end <= self.inner.len());
         let (vec,range) = self._make_mut();
         &mut vec[range.clone()]
     }
@@ -196,7 +196,7 @@ impl<T> IntoIterator for ArcSlice<T> where T: Clone {
                 v.truncate(slice.end);
                 let mut iter = v.into_iter();
                 for _ in 0..slice.start {
-                    assert!(iter.next().is_some());
+                    debug_assert!(iter.next().is_some());
                 }
                 iter
             }
@@ -236,7 +236,7 @@ impl Write for ArcSlice<u8> {
 
     #[inline]
     fn write_vectored(&mut self, bufs: &[IoSlice<'_>]) -> io::Result<usize> {
-        let len = bufs.iter().map(|b| b.len()).sum();
+        let len = bufs.iter().map(#[inline] |b| b.len()).sum();
         let (vec,slice) = self._make_mut_with_capacity(self.len() + len);
         vec.truncate(slice.end);
         vec.reserve(len);
