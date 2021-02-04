@@ -81,6 +81,7 @@ impl<T> VecExt<T> for Vec<T> {
         }
 
         unsafe {
+            self.set_len(0);
             {
                 let mut p = self.as_mut_ptr().add(index);
                 ptr::copy(p, p.add(slen), vlen - index);
