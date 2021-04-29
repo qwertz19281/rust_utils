@@ -1,5 +1,6 @@
 
-use std::iter::Sum;
+use std::iter::{FromIterator, Sum, repeat};
+use std::mem::MaybeUninit;
 use std::ops::*;
 
 pub trait AsTuple {
@@ -75,5 +76,79 @@ mod test {
 
         assert_eq!((3u32,6u32,8u32,3u32,5u32,2u32).avg::<u32>(), 4u32);
         assert_eq!((3u32,6u32,8u32,3u32,5u32,2u32).avg::<f64>(), 4.5);
+    }
+}
+
+pub trait ELA<T,DynFallback> where DynFallback: Sized {
+    type ELA: Sized;
+
+    fn ela_filled(&self, t: T) -> Self::ELA where T: Clone;
+}
+
+impl<T,U,D,const N: usize> ELA<U,D> for [T;N] {
+    type ELA = [U;N];
+
+    fn ela_filled(&self, u: U) -> Self::ELA where U: Clone {
+        filled_array(|| u.clone() )
+    }
+}
+impl<T,U,D,const N: usize> ELA<U,D> for &[T;N] {
+    type ELA = [U;N];
+
+    fn ela_filled(&self, u: U) -> Self::ELA where U: Clone {
+        filled_array(|| u.clone() )
+    }
+}
+
+impl<T,U,D> ELA<U,D> for [T] where D: FromIterator<U> {
+    type ELA = D;
+
+    fn ela_filled(&self, u: U) -> Self::ELA where U: Clone {
+        FromIterator::from_iter(
+            repeat(u).take(self.len())
+        )
+    }
+}
+impl<T,U,D> ELA<U,D> for &[T] where D: FromIterator<U> {
+    type ELA = D;
+
+    fn ela_filled(&self, u: U) -> Self::ELA where U: Clone {
+        FromIterator::from_iter(
+            repeat(u).take(self.len())
+        )
+    }
+}
+
+impl<T,U,D> ELA<U,D> for Vec<T> where D: FromIterator<U>{
+    type ELA = D;
+
+    fn ela_filled(&self, u: U) -> Self::ELA where U: Clone {
+        FromIterator::from_iter(
+            repeat(u).take(self.len())
+        )
+    }
+}
+impl<T,U,D> ELA<U,D> for &Vec<T> where D: FromIterator<U> {
+    type ELA = D;
+
+    fn ela_filled(&self, u: U) -> Self::ELA where U: Clone {
+        FromIterator::from_iter(
+            repeat(u).take(self.len())
+        )
+    }
+}
+
+#[inline]
+pub fn filled_array<T,const N: usize>(mut f: impl FnMut()->T) -> [T;N] {
+    let mut v: [MaybeUninit<T>;N] = unsafe {
+        MaybeUninit::uninit().assume_init()
+    };
+
+    for v in &mut v {
+        *v = MaybeUninit::new(f());
+    }
+
+    unsafe{
+        std::mem::transmute_copy::<_,[T;N]>(&v)
     }
 }
